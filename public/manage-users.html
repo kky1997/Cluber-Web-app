@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./stylesheets/style.css" />
+        <link rel="icon" href="./images/icon.png" />
+        <script src="https://kit.fontawesome.com/9ee0ab41a9.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+        <script src="./javascripts/manage-users.js" defer></script>
+        <script src="./components/header.js"></script>
+        <script src="./components/nav.js"></script>
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#455db2">
+        <title>CLUBER - Manage Users</title>
+    </head>
+    <body>
+        <div id="app">
+            <header-component></header-component>
+            <div id="main-body">
+                <nav-component></nav-component>
+                <main>
+                    <h1 class="page-title">Manage Users</h1>
+                    <div id="filter-background">
+                        <div id="filters">
+                            <input type="text" id="user-search" title="Search by username" placeholder="Search username..." v-model="username_filter" v-on:input="filterUsers()">
+                            <select name="user-roles" id="user-roles-select" title="Filter by user role" v-model="user_role_filter" v-on:change="filterUsers()">
+                                <option>all roles</option>
+                                <option>ADMIN</option>
+                                <option>CLUB MANAGER</option>
+                                <option>CLUB MEMBER</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="user-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th class="hidden-column-550">First Name</th>
+                                    <th class="hidden-column-550">Last Name</th>
+                                    <th class="hidden-column-1100">Email</th>
+                                    <th class="hidden-column-1200">Phone Number</th>
+                                    <th>Roles</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody v-for="user in filtered_users">
+                                <tr>
+                                    <td>{{user.username}}</td>
+                                    <td class="hidden-column-550">{{user.firstName}}</td>
+                                    <td class="hidden-column-550">{{user.lastName}}</td>
+                                    <td class="hidden-column-1100">{{user.email}}</td>
+                                    <td class="hidden-column-1200">{{user.phoneNumber}}</td>
+                                    <td>{{getRoles(user.id)}}</td>
+                                    <td>
+                                        <i class="fa fa-solid fa-pen edit" v-on:click="showEditModal(user.id)"></i>
+                                        <i class="fa fa-solid fa-trash delete" v-on:click="delete_modal_visible = true; selected_user = user.id"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="delete-user-modal" class="modal" v-if="delete_modal_visible">
+                        <div class="modal-content">
+                            <div class="right-aligned">
+                                <i class="fa fa-solid fa-xmark close close-icon" v-on:click="delete_modal_visible = false; selected_user = -1"></i>
+                            </div>
+                            <div>
+                            <h2>Delete User</h2>
+                            </div>
+                            <div class="dialog-text">
+                                <p>Are you sure you want to delete user <b>{{getSelectedUser().username}}</b>?</p>
+                            </div>
+                            <div class="right-aligned">
+                                <button type="button" class="cancel-button close" v-on:click="delete_modal_visible = false; selected_user = -1">Cancel</button>
+                                <button type="button" class="delete-button" v-on:click="deleteUser()">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="edit-user-modal" class="modal" v-if="edit_modal_visible">
+                        <div class="modal-content">
+                            <div class="right-aligned">
+                                <i class="fa fa-solid fa-xmark close close-icon" v-on:click="edit_modal_visible = false; selected_user = -1"></i>
+                            </div>
+                            <div>
+                                <h2>Edit User</h2>
+                            </div>
+                            <div class="dialog-text">
+                                <p>You are editting user <b>{{getSelectedUser().username}}</b>.</p>
+                            </div>
+                           <div>
+                                <label for="username-input">Username</label>
+                                <input id="username-input" type="text" v-model="edit_username">
+                                <label for="first-name-input">First name</label>
+                                <input id="first-name-input" type="text" v-model="edit_first_name">
+                                <label for="last-name-input">Last name</label>
+                                <input id="last-name-input" type="text" v-model="edit_last_name">
+                                <label for="email-input">Email</label>
+                                <input id="email-input" type="text" v-model="edit_email">
+                                <label for="phone-number-input">Phone Number</label>
+                                <input id="phone-number-input" type="text" v-model="edit_phone_number">
+                                <input type="checkbox" id="is-admin-input" name="is-admin" v-model="edit_is_admin">
+                                <label for="is-admin"> Is ADMIN</label><br>
+                            </div>
+                            <div class="right-aligned">
+                                <button type="button" class="cancel-button close" v-on:click="edit_modal_visible = false; selected_user = -1">Cancel</button>
+                                <button type="button" class="save-button" v-on:click="editUser()">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </body>
+</html>

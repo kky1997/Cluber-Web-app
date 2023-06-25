@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./stylesheets/style.css" />
+        <script src="https://kit.fontawesome.com/9ee0ab41a9.js" crossorigin="anonymous"></script>
+        <link rel="icon" href="./images/icon.png" />
+        <script src="./javascripts/clubs.js" defer></script>
+        <script src="./components/header.js"></script>
+        <script src="./components/nav.js"></script>
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#455db2">
+        <title>CLUBER - Clubs</title>
+    </head>
+    <body>
+        <div id="app">
+            <header-component></header-component>
+            <div id="main-body">
+                <nav-component></nav-component>
+                <main v-if="viewing_club === -1">
+                    <div id="filter-background">
+                        <div id="filters">
+                            <select name="club-filter" id="club-filter" title="Filter by Clubs" v-model="club_filter_value" v-on:change="filterClubs">
+                                <option value="" selected>all clubs</option>
+                                <option value=1>clubs I follow</option>
+                                <option value=0>clubs I don't follow</option>
+                            </select>
+                            <select name="tags" id="tags" title="Filter by Category" v-model="tag_filter_value" v-on:change="filterClubs">
+                                <option value="" selected>all tags</option>
+                                <option v-for="tag in clubTags" v-bind:value="tag">{{tag}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <section v-if="numberOfClubsDisplaying !== 0" id="posts">
+                        <article v-for="club in clubs" v-bind:id="club.id" class="post club" v-on:click="viewing_club = club.id; viewing_club_name = club.club_name; viewing_club_description = club.club_description; getPostsInitial();" title="Enter Club">
+                            <h3 v-bind:style="{'background-color': club.club_color}">{{club.followers}} members</h3>
+                            <h2>{{club.club_name}}</h2>
+                            <p class="post-content">{{club.club_description}}</p>
+                            <button type="button" class="view-club-button" >
+                                <span>Enter Club</span>
+                            </button>
+                            <div class="space"></div>
+                            <div class="tag">{{club.club_tag}}</div>
+                            <div class="space"></div>
+                        </article>
+                    </section>
+                    <div v-else class="no-content">
+                        <p>
+                            There are no Clubs!
+                        </p>
+                    </div>
+                    <a href="#" title="Back to the top" id="back-to-top"><img src="./images/to-top.svg" alt="To top icon" /></a>
+                </main>
+                <main v-else>
+                    <div id="club-description">
+                        <div id="filter-background">
+                            <div id="filters">
+                                <select name="tags" id="tags" title="Filter by Event or Post" v-model="post_tag_filter_value" v-on:change="filterPosts">
+                                    <option value="" selected>all tags</option>
+                                    <option value="event">Event</option>
+                                    <option value="post">Post</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="club-manager-options">
+                            <button type="button" id="add-club-button" v-on:click="show_post_creation = true" title="Create a post/event">
+                                <i class="fa fa-plus fa-regular" style="padding-right: 0;"></i><span class="hide-text">Create a post/event</span>
+                            </button>
+                            <button type="button" id="view-members-button" v-on:click="getClubMembers(); show_club_members = true" title="View club members">
+                                <svg width="1rem" height="1rem" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                    <g id="Page-1" stroke="none" stroke-width="1" fill="#ffffff" fill-rule="evenodd">
+                                        <g id="Dribbble-Light-Preview" transform="translate(-140.000000, -2159.000000)" fill="#ffffff">
+                                            <g id="icons" transform="translate(56.000000, 160.000000)">
+                                                <path d="M100.562548,2016.99998 L87.4381713,2016.99998 C86.7317804,2016.99998 86.2101535,2016.30298 86.4765813,2015.66198 C87.7127655,2012.69798 90.6169306,2010.99998 93.9998492,2010.99998 C97.3837885,2010.99998 100.287954,2012.69798 101.524138,2015.66198 C101.790566,2016.30298 101.268939,2016.99998 100.562548,2016.99998 M89.9166645,2004.99998 C89.9166645,2002.79398 91.7489936,2000.99998 93.9998492,2000.99998 C96.2517256,2000.99998 98.0830339,2002.79398 98.0830339,2004.99998 C98.0830339,2007.20598 96.2517256,2008.99998 93.9998492,2008.99998 C91.7489936,2008.99998 89.9166645,2007.20598 89.9166645,2004.99998 M103.955674,2016.63598 C103.213556,2013.27698 100.892265,2010.79798 97.837022,2009.67298 C99.4560048,2008.39598 100.400241,2006.33098 100.053171,2004.06998 C99.6509769,2001.44698 97.4235996,1999.34798 94.7348224,1999.04198 C91.0232075,1998.61898 87.8750721,2001.44898 87.8750721,2004.99998 C87.8750721,2006.88998 88.7692896,2008.57398 90.1636971,2009.67298 C87.1074334,2010.79798 84.7871636,2013.27698 84.044024,2016.63598 C83.7745338,2017.85698 84.7789973,2018.99998 86.0539717,2018.99998 L101.945727,2018.99998 C103.221722,2018.99998 104.226185,2017.85698 103.955674,2016.63598" id="profile_round-[#1342]">
+                                                </path>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </svg>
+                                <span class="hide-text"> View members</span>
+                            </button>
+                            <button type="button" id="join-club-button" v-on:click="joinClub()" title="Join this club">
+                                <i class="fa fa-plus fa-regular" style="padding-right: 0;"></i><span> Join Club</span>
+                            </button>
+                            <button type="button" id="leave-club-button" v-on:click="joinClub()" title="Leave this club" style="background-color: 'red'; display: none;">
+                                <span> Leave Club</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="modal" v-if="show_post_creation">
+                        <div class="post-creation">
+                            <div class="right-aligned">
+                                <i class="fa fa-solid fa-xmark close close-icon" v-on:click="show_post_creation = false"></i>
+                            </div>
+                            <form @submit.prevent="createPost()">
+                                <select name="post_creation_type" id="post_creation_type" v-model="post_creation_type" required>
+                                    <option value="" selected disabled>Is this a post or event?</option>
+                                    <option value="post">POST</option>
+                                    <option value="event">EVENT</option>
+                                </select>
+                                <select name="post_type" id="post_type" v-model="post_type" required>
+                                    <option value="" selected disabled>Is this public or private?</option>
+                                    <option value="public">PUBLIC</option>
+                                    <option value="private">PRIVATE</option>
+                                </select>
+                                <label v-if="post_creation_type !== ''" for="title" class="move-below">TITLE</label>
+                                <input v-if="post_creation_type !== ''" type="text" name="title" maxlength="50" class="move-below" required v-model="title">
+                                <label v-if="post_creation_type === 'event'" for="title" class="move-below">DATE/TIME OF EVENT</label>
+                                <input v-if="post_creation_type === 'event'" type="datetime-local" name="eventDate" class="move-below" required v-model="eventDate">
+                                <label v-if="post_creation_type === 'event'" for="title" class="move-below">LOCATION OF EVENT</label>
+                                <input v-if="post_creation_type === 'event'" type="text" name="location" maxlength="80" class="move-below" required v-model="location">
+                                <label v-if="post_creation_type === 'event'" for="title" class="move-below">EVENT DESCRIPTION</label>
+                                <textarea v-if="post_creation_type === 'event'" name="post_content" style="resize: vertical" class="move-below" required v-model="post_content"></textarea>
+                                <label v-if="post_creation_type === 'post'" for="title" class="move-below">POST CONTENT</label>
+                                <textarea v-if="post_creation_type === 'post'" name="post_content" style="resize: vertical" class="move-below" required v-model="post_content"></textarea>
+                                <button v-if="post_creation_type !== ''" type="submit" class="move-below save-button">CREATE</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal" v-if="show_club_members">
+                        <div class="post-creation" style="max-height: 80%; overflow-y: auto;">
+                            <div class="right-aligned">
+                                <i class="fa fa-solid fa-xmark close close-icon" v-on:click="show_club_members = false"></i>
+                            </div>
+                            <table v-if="numberOfUsersDisplaying">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Date Joined</th>
+                                    </tr>
+                                </thead>
+                                <tbody v-for="user in users">
+                                    <tr>
+                                        <td>{{user.username}}</td>
+                                        <td>{{user.date_joined}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div v-else>
+                                <p>
+                                    This Club has no members!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal" v-if="show_rsvps">
+                        <div class="post-creation" style="max-height: 80%; overflow-y: auto;">
+                            <div class="right-aligned">
+                                <i class="fa fa-solid fa-xmark close close-icon" v-on:click="show_rsvps = false"></i>
+                            </div>
+                            <table v-if="numberOfUsersDisplaying">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Date Responded</th>
+                                    </tr>
+                                </thead>
+                                <tbody v-for="user in users">
+                                    <tr>
+                                        <td>{{user.username}}</td>
+                                        <td>{{user.date_responded}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div v-else>
+                                <p>
+                                    No one has rsvp'd yet!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <section v-if="numberOfPostsDisplaying !== 0" id="posts">
+                        <article v-for="post in posts" v-bind:id="post.id" v-bind:class="[{'unread': !(post.Post_viewed)}, 'post']" v-on:click="markPostAsRead(post.id)" @mouseover="post.isHovered = true" @mouseleave="post.isHovered = false">
+                            <img v-if="!(post.Post_viewed)" v-bind:src="post.isHovered ? unreadPostHoverImage : unreadPostImage" alt="Unread Post">
+                            <h3 v-bind:style="{'background-color': post.club_color}">{{post.club_name}}</h3>
+                            <h4>{{post.creation_date_time}}</h4>
+                            <h2>{{post.title}}</h2>
+                            <h4 v-if="post.tag === 'event'" class="event-details"><span>When: </span>{{post.event_date_time}}</h4>
+                            <h4 v-if="post.tag === 'event'" class="event-details">
+                                <span> Where: </span>{{post.event_location}}
+                            </h4>
+                            <div class="rsvp-flex" v-if="post.tag === 'event' && !post.notUser && !post.disable_rsvp">
+                                <button type="button" v-on:click="rsvp(post.id, 2)" title="Going" class="goingButton">
+                                    <svg width="2rem" height="2rem" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" v-bind:class="[{greyButtonGoing: (post.rsvp !== null && post.rsvp !== 2 && post.rsvp !== -1), greenButton: (post.rsvp === 2)}]">
+                                        <rect x="0" fill="none" width="2rem" height="2rem"/>
+                                        <g>
+                                            <path d="M10 2c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm-.615 12.66h-1.34l-3.24-4.54 1.34-1.25 2.57 2.4 5.14-5.93 1.34.94-5.81 8.38z"/>
+                                        </g>
+                                    </svg>
+                                </button>
+                                <button type="button" v-on:click="rsvp(post.id, 1)" title="Maybe" class="maybeButton">
+                                    <svg v-bind:class="[{greyButtonMaybe: (post.rsvp !== null && post.rsvp !== 1 && post.rsvp !== -1), orangeButton: (post.rsvp === 1)}]" width="800px" height="800px" viewBox="-1.7 0 20.4 20.4" xmlns="http://www.w3.org/2000/svg" class="cf-icon-svg"><path d="M16.476 10.283A7.917 7.917 0 1 1 8.56 2.366a7.916 7.916 0 0 1 7.916 7.917zm-5.034-2.687a2.845 2.845 0 0 0-.223-1.13A2.877 2.877 0 0 0 9.692 4.92a2.747 2.747 0 0 0-1.116-.227 2.79 2.79 0 0 0-1.129.227 2.903 2.903 0 0 0-1.543 1.546 2.803 2.803 0 0 0-.227 1.128v.02a.792.792 0 0 0 1.583 0v-.02a1.23 1.23 0 0 1 .099-.503 1.32 1.32 0 0 1 .715-.717 1.223 1.223 0 0 1 .502-.098 1.18 1.18 0 0 1 .485.096 1.294 1.294 0 0 1 .418.283 1.307 1.307 0 0 1 .281.427 1.273 1.273 0 0 1 .099.513 1.706 1.706 0 0 1-.05.45 1.546 1.546 0 0 1-.132.335 2.11 2.11 0 0 1-.219.318c-.126.15-.25.293-.365.424-.135.142-.26.28-.374.412a4.113 4.113 0 0 0-.451.639 3.525 3.525 0 0 0-.342.842 3.904 3.904 0 0 0-.12.995v.035a.792.792 0 0 0 1.583 0v-.035a2.324 2.324 0 0 1 .068-.59 1.944 1.944 0 0 1 .187-.463 2.49 2.49 0 0 1 .276-.39c.098-.115.209-.237.329-.363l.018-.02c.129-.144.264-.301.403-.466a3.712 3.712 0 0 0 .384-.556 3.083 3.083 0 0 0 .28-.692 3.275 3.275 0 0 0 .108-.875zM9.58 14.895a.982.982 0 0 0-.294-.707 1.059 1.059 0 0 0-.32-.212l-.004-.001a.968.968 0 0 0-.382-.079 1.017 1.017 0 0 0-.397.08 1.053 1.053 0 0 0-.326.212 1.002 1.002 0 0 0-.215 1.098 1.028 1.028 0 0 0 .216.32 1.027 1.027 0 0 0 .722.295.968.968 0 0 0 .382-.078l.005-.002a1.01 1.01 0 0 0 .534-.534.98.98 0 0 0 .08-.392z"/></svg>
+                                </button>
+                                <button type="button" v-on:click="rsvp(post.id, 0)" title="Not Going" class="notGoingButton">
+                                    <svg v-bind:class="[{greyButtonNotGoing: (post.rsvp !== null && post.rsvp !== 0 && post.rsvp !== -1), redButton: (post.rsvp === 0)}]" width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="cross-circle" class="icon glyph"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm3.71,12.29a1,1,0,0,1,0,1.42,1,1,0,0,1-1.42,0L12,13.42,9.71,15.71a1,1,0,0,1-1.42,0,1,1,0,0,1,0-1.42L10.58,12,8.29,9.71A1,1,0,0,1,9.71,8.29L12,10.58l2.29-2.29a1,1,0,0,1,1.42,1.42L13.42,12Z"></path></svg>
+                                </button>
+                            </div>
+                            <p v-bind:class="['post-content', {'post-content-hidden': !(post.isExpanded)}]">{{post.content}}</p>
+                            <button v-if="post.tag === 'event' && club_manager" type="button" class="view-rsvps-button" v-on:click="getRsvps(post.id); show_rsvps = true" title="View who has rsvp'd to this event">
+                                <svg width="1rem" height="1rem" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                    <g id="Page-1" stroke="none" stroke-width="1" fill="#ffffff" fill-rule="evenodd">
+                                        <g id="Dribbble-Light-Preview" transform="translate(-140.000000, -2159.000000)" fill="#ffffff">
+                                            <g id="icons" transform="translate(56.000000, 160.000000)">
+                                                <path d="M100.562548,2016.99998 L87.4381713,2016.99998 C86.7317804,2016.99998 86.2101535,2016.30298 86.4765813,2015.66198 C87.7127655,2012.69798 90.6169306,2010.99998 93.9998492,2010.99998 C97.3837885,2010.99998 100.287954,2012.69798 101.524138,2015.66198 C101.790566,2016.30298 101.268939,2016.99998 100.562548,2016.99998 M89.9166645,2004.99998 C89.9166645,2002.79398 91.7489936,2000.99998 93.9998492,2000.99998 C96.2517256,2000.99998 98.0830339,2002.79398 98.0830339,2004.99998 C98.0830339,2007.20598 96.2517256,2008.99998 93.9998492,2008.99998 C91.7489936,2008.99998 89.9166645,2007.20598 89.9166645,2004.99998 M103.955674,2016.63598 C103.213556,2013.27698 100.892265,2010.79798 97.837022,2009.67298 C99.4560048,2008.39598 100.400241,2006.33098 100.053171,2004.06998 C99.6509769,2001.44698 97.4235996,1999.34798 94.7348224,1999.04198 C91.0232075,1998.61898 87.8750721,2001.44898 87.8750721,2004.99998 C87.8750721,2006.88998 88.7692896,2008.57398 90.1636971,2009.67298 C87.1074334,2010.79798 84.7871636,2013.27698 84.044024,2016.63598 C83.7745338,2017.85698 84.7789973,2018.99998 86.0539717,2018.99998 L101.945727,2018.99998 C103.221722,2018.99998 104.226185,2017.85698 103.955674,2016.63598" id="profile_round-[#1342]">
+                                                </path>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </svg>
+                                <span> Who has RSVP'D?</span>
+                            </button>
+                            <div class="space"></div>
+                            <button class="see-more" type="button" v-on:click="post.isExpanded = !post.isExpanded; wasViewMoreClicked = true"><u v-if="post.isExpanded === false">View more</u><u v-else>View less</u></button>
+                            <div class="tag">{{post.tag}}</div>
+                            <div class="space"></div>
+                        </article>
+                    </section>
+                    <div v-else class="no-content">
+                        <p v-if="post_tag_filter_value === 'post'">
+                            This Club has no posts!
+                        </p>
+                        <p v-else>
+                            This Club has no events!
+                        </p>
+                    </div>
+                    <a href="#" title="Back to the top" id="back-to-top"><img src="./images/to-top.svg" alt="To top icon" /></a>
+                </main>
+            </div>
+        </div>
+    </body>
+</html>

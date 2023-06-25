@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./stylesheets/style.css" />
+        <link rel="icon" href="./images/icon.png" />
+        <script src="https://kit.fontawesome.com/9ee0ab41a9.js" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <script src="./javascripts/notifications.js" defer></script>
+        <script src="./components/header.js"></script>
+        <script src="./components/nav.js"></script>
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#455db2">
+        <title>CLUBER - Notifications</title>
+    </head>
+    <body>
+        <div id="app">
+            <header-component></header-component>
+            <div id="main-body">
+                <nav-component></nav-component>
+                <main>
+                    <div v-if="!numberOfClubsDisplaying" class="no-content">
+                        <p>
+                            You are not following any Clubs!
+                        </p>
+                    </div>
+                    <section id="posts" v-else>
+                        <table style="border: 0px solid black;">
+                            <tr>
+                                <td>
+                                    <p>Notifications</p>
+                                </td>
+                                <td>
+                                    <label class="switch">
+                                        <input type="checkbox" v-model="notifications_enabled" v-on:change="updateNotification(-1)">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                        </table>
+                        <table v-if="notifications_enabled">
+                            <tr>
+                                <th>Club Name</th>
+                                <th>Post Notifications</th>
+                                <th>Event Notifications</th>
+                            </tr>
+                            <tr v-for="club in clubs" v-bind:id="'a'+club.id">
+                                <td>{{club.club_name}}</td>
+                                <td class="post-setting"><label class="switch">
+                                    <input type="checkbox" v-on:change="updateNotification(club.id)" v-model="club.post_enabled">
+                                    <span class="slider round"></span>
+                                </label></td>
+                                <td class="event-setting"><label class="switch">
+                                    <input type="checkbox" v-on:change="updateNotification(club.id)" v-model="club.event_enabled">
+                                    <span class="slider round"></span>
+                                </label></td>
+                            </tr>
+                        </table>
+                    </section>
+                </main>
+            </div>
+        </div>
+    </body>
+</html>

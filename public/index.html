@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./stylesheets/style.css" />
+        <link rel="icon" href="./images/icon.png" />
+        <script src="https://accounts.google.com/gsi/client" async defer></script> <!--GOOGLE SIGN IN-->
+        <script src="./javascripts/index.js" defer></script>
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#455db2">
+        <title>CLUBER</title>
+    </head>
+    <body>
+        <div id="app">
+            <header>
+                    <h1 id="title" title="Welcome to CLUBER!">CLUBER</h1>
+                    <a href="/feed.html" id="continue-to-site">Continue<br>to site</a>
+            </header>
+            <div id="main-body">
+                <main id="login">
+                    <!--GOOGLE SIGN IN BUTTON-->
+                    <div id="g_id_onload"
+                        data-client_id="526111756235-7mr4l5b07tn1snd0ahl1l768c4kf51cm.apps.googleusercontent.com"
+                        data-context="signin"
+                        data-ux_mode="popup"
+                        data-callback="google_login"
+                        data-auto_prompt="false">
+                    </div>
+                    <div class="g_id_signin-container">
+                        <div class="g_id_signin"
+                        data-type="standard"
+                        data-shape="rectangular"
+                        data-theme="outline"
+                        data-text="signin_with"
+                        data-size="large"
+                        data-logo_alignment="left">
+                        </div>
+                    </div>
+                    <!--GOOGLE SIGN IN BUTTON-->
+                    <br />
+                    <div class="divider"></div>
+                    <h4>OR</h4>
+                    <div class="divider"></div>
+                    <br />
+                    <br />
+                    <!--pass in event object from the onsubmit event handler. Also using POST method for form so that login info sent in body and not append to the URL (in a GET request)-->
+                    <form id="login-details" v-if="signIn" method="post" onsubmit="return login(event)">
+                        <label for="username" >USERNAME</label><br>
+                        <input v-model="username" type="text" id="username" name="username" title="Enter your username" required/><br>
+                        <label for="password" >PASSWORD</label><br>
+                        <input v-model="password" type="password" id="password" name="password" title="Enter your password" required/><br>
+                        <input type="submit" value="LOG IN" title="Click to log in" /><br>
+                        <button type="button" id="create-account" v-on:click="signIn = false; password = ''"><span>Don't have an account?</span> <u>Click here!</u></button>
+                        <div id="login-error-message" class="error"></div> <!-- Error message element -->
+                    </form>
+                    <form id="creation-details" v-else method="post" action="/accountCreationComplete" onsubmit="submitSignupForm(event)">
+                        <label for="email">EMAIL</label><br>
+                        <input v-model="email" type="email" id="email" name="email" title="Enter your email" required/><br>
+                        <label for="username">USERNAME</label><br>
+                        <input v-model="username" type="text" id="username-creation" name="username" title="Enter a username" required/><br>
+                        <label for="password-creation">PASSWORD</label><br>
+                        <input v-model="password" type="password" id="password-creation" name="password-creation" title="Enter a password" required/><br>
+                        <label for="password-repeat">REPEAT PASSWORD</label><br>
+                        <input v-model="repeatPassword" type="password" id="password-repeat" name="password-repeat" title="Enter the password again" required/><br>
+                        <input type="submit" value="SIGN UP" title="Click to sign up"/><br>
+                        <button type="button" id="login-account" v-on:click="signIn = true; password = ''"><span>Already have an account?</span> <u>Click here!</u></button>
+                        <div id="creation-error-message" class="error"></div> <!-- Error message element -->
+                    </form>
+                </main>
+            </div>
+        </div>
+    </body>
+</html>

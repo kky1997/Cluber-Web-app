@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./stylesheets/style.css" />
+        <link rel="icon" href="./images/icon.png" />
+        <script src="https://kit.fontawesome.com/9ee0ab41a9.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+        <script src="./javascripts/manage-profile.js" defer></script>
+        <script src="./components/header.js"></script>
+        <script src="./components/nav.js"></script>
+        <title>CLUBER - My Profile</title>
+    </head>
+    <body>
+        <div id="app">
+            <header-component></header-component>
+            <div id="main-body">
+                <nav-component></nav-component>
+                <main>
+                    <h1 class="page-title">My Profile</h1>
+                    <div class="button-div">
+                        <button v-on:click="edit_profile ? editProfile() : edit_profile = !edit_profile" type="button" class="edit-profile-button">
+                            {{ edit_profile ? 'Save Profile' : 'Edit Profile'}}
+                        </button>
+                    </div>
+
+                    <div class="profile-box">
+
+                        <div class="profile-picture">
+                            <img class="profile-icon" v-bind:src="image" alt="Profile Image">
+                        </div>
+
+                        <div class="profile-details">
+                            <div class="profile-label-text">
+                                <div class="profile-label"> Username</div>
+                                <div v-if="!edit_profile" class="profile-text profile-text-padding"> {{ username }} </div>
+                                <input v-else type="text" class="profile-text profile-input" v-model="username">
+                            </div>
+
+                            <div class="profile-label-text">
+                                <div class="profile-label"> First Name</div>
+                                <div v-if="!edit_profile" class="profile-text profile-text-padding"> {{ first_name }} </div>
+                                <input v-else type="text" class="profile-text profile-input" v-model="first_name">
+                            </div>
+
+                            <div class="profile-label-text">
+                                <div class="profile-label"> Last Name</div>
+                                <div v-if="!edit_profile" class="profile-text profile-text-padding"> {{ last_name }} </div>
+                                <input v-else type="text" class="profile-text profile-input" v-model="last_name">
+                            </div>
+
+                            <div class="profile-label-text">
+                                <div class="profile-label"> Email</div>
+                                <div v-if="!edit_profile" class="profile-text profile-text-padding"> {{ email }} </div>
+                                <input v-else type="text" class="profile-text profile-input" v-model="email">
+                            </div>
+
+                            <div class="profile-label-text">
+                                <div class="profile-label"> Phone</div>
+                                <div v-if="!edit_profile" class="profile-text profile-text-padding"> {{ phone }} </div>
+                                <input v-else type="text" class="profile-text profile-input" v-model="phone">
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div v-if="edit_profile" class="profile-upload">
+                        <label for="image-upload" class="upload-label">
+                            <input id="image-upload" type="file" ref="fileInput" accept="image/*" class="upload-input"/>
+                                Upload Image
+                        </label>
+                        <button v-on:click="uploadImage()" class="edit-profile-button">Confirm</button>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </body>
+</html>
