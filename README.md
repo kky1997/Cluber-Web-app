@@ -30,6 +30,7 @@ All users currently in the system have the same password for easy testing. We wo
 Passwords are hashed using Argon2 hashing.
 
 To run on a unix-like system:
+
     1. install node.js as well as the dependencies (express, mySQL)
 
     2. use the sql query file to create the database and run a few basic queries to populate database
